@@ -1,0 +1,599 @@
+/* ── Bracket page shell ── */
+.bracket-page { padding: 0 0 60px; }
+
+/* ── Controls bar ── */
+.bp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 24px;
+  background: rgba(11,20,34,0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.bp-mode-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.bp-mode-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.bp-mode-btn.active {
+  background: var(--gold);
+  color: #000;
+}
+
+.bp-actions { display: flex; align-items: center; gap: 10px; }
+
+.bp-override-badge {
+  font-size: 12px;
+  background: rgba(240,180,41,0.15);
+  border: 1px solid rgba(240,180,41,0.3);
+  color: var(--gold);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.bp-simulate-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.bp-simulate-btn:disabled { opacity: 0.4; cursor: default; }
+.bp-simulate-btn:hover:not(:disabled) { opacity: 0.9; }
+
+.bp-reset-btn {
+  padding: 10px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.bp-reset-btn:hover { border-color: var(--border-bright); color: var(--text); }
+
+.bp-manual-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 10px 24px;
+  background: rgba(240,180,41,0.04);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Pre-simulation & loading ── */
+.bp-presim {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-dim);
+}
+.bp-presim-icon { font-size: 52px; margin-bottom: 16px; }
+.bp-presim-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.bp-presim-text { font-size: 14px; line-height: 1.8; max-width: 480px; margin: 0 auto; }
+
+.bp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+.bp-spinner-large {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(240,180,41,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Bracket scroll wrapper ── */
+.br-scroll-wrapper {
+  overflow-x: auto;
+  padding: 32px 0 40px;
+  -webkit-overflow-scrolling: touch;
+  /* Subtle pitch-centre circle behind the bracket */
+  background:
+    radial-gradient(ellipse 40% 60% at 50% 50%, rgba(240,180,41,0.04) 0%, transparent 70%);
+}
+.br-scroll-wrapper::-webkit-scrollbar { height: 6px; }
+.br-scroll-wrapper::-webkit-scrollbar-track { background: transparent; }
+.br-scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(240,180,41,0.3); border-radius: 4px; }
+
+/* ── Bracket root layout ── */
+.br-bracket {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: max-content;
+  padding: 0 24px;
+  gap: 0;
+}
+
+/* ── Each half ── */
+.br-half {
+  display: flex;
+  align-items: stretch;
+  height: 660px;   /* fixed bracket height */
+}
+
+.br-half-left  { flex-direction: row; }
+/* row-reverse makes SF appear closest to center, R32 on the far right */
+.br-half-right { flex-direction: row-reverse; }
+
+/* ── Round columns ── */
+.br-round-col {
+  display: flex;
+  flex-direction: column;
+  width: 138px;
+  flex-shrink: 0;
+}
+
+.br-half-left  .br-round-col { margin-right: 28px; }
+.br-half-left  .br-round-col:last-child { margin-right: 0; }
+.br-half-right .br-round-col { margin-left: 28px; }
+.br-half-right .br-round-col:last-child { margin-left: 0; }
+
+.br-round-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(240,180,41,0.65);
+  text-align: center;
+  padding-bottom: 10px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.br-round-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Pair: two match cards with bracket connectors ── */
+.br-pair {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+}
+
+/* Pair vertical connector — gold tint */
+.br-half-left .br-pair::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: rgba(240,180,41,0.35);
+}
+.br-half-right .br-pair::after {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: rgba(240,180,41,0.35);
+}
+
+/* ── Single: SF (one match, no pair connector) ── */
+.br-single {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ── Match card (bm = bracket match) ── */
+.bm {
+  background: linear-gradient(135deg, var(--surface2) 0%, rgba(10,18,30,0.9) 100%);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  transition: box-shadow 0.2s;
+}
+.bm:hover { box-shadow: 0 0 16px rgba(190,215,255,0.08); }
+
+.bm-manual {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.bm-manual:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(240,180,41,0.12); }
+
+/* Match card outgoing horizontal connector — gold tint */
+.br-half-left .bm::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.35);
+}
+.br-half-right .bm::after {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.35);
+}
+
+/* Match card incoming connector */
+.br-half-left .bm::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.35);
+}
+.br-half-right .bm::before {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.35);
+}
+
+/* ── Match card inner layout ── */
+.bm-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+  min-height: 30px;
+}
+.bm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+.bm-flag  { font-size: 14px; line-height: 1; flex-shrink: 0; }
+.bm-name  { font-size: 11px; font-weight: 600; color: var(--text-dim); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bm-score { font-size: 13px; font-weight: 800; color: var(--text-dim); margin-left: auto; padding-left: 4px; flex-shrink: 0; }
+
+.bm-winner .bm-name,
+.bm-winner .bm-score { color: var(--gold); }
+.bm-winner {
+  background: linear-gradient(135deg, rgba(240,180,41,0.09) 0%, rgba(240,180,41,0.03) 100%);
+  border-left: 2px solid rgba(240,180,41,0.4);
+}
+
+.bm-loser .bm-name,
+.bm-loser .bm-score { color: var(--text-muted); opacity: 0.6; }
+
+/* ── Center column (Final + Champion) ── */
+.br-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  flex-shrink: 0;
+  gap: 16px;
+  padding: 0 8px;
+}
+.br-center-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-align: center;
+  text-shadow: 0 0 16px rgba(240,180,41,0.5);
+}
+
+.br-final-match {
+  width: 100%;
+  position: relative;
+}
+/* Incoming connectors on both sides of the Final card */
+.br-final-match .bm::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.5);
+}
+.br-final-match .bm::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 1px;
+  background: rgba(240,180,41,0.5);
+}
+
+/* ── Champion card ── */
+.br-champion {
+  text-align: center;
+  background: linear-gradient(135deg, rgba(240,180,41,0.16) 0%, rgba(240,130,20,0.06) 100%);
+  border: 1px solid rgba(240,180,41,0.45);
+  border-radius: 12px;
+  padding: 18px 20px;
+  width: 100%;
+  box-shadow: 0 0 40px rgba(240,180,41,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  animation: championGlow 2.5s ease-in-out infinite alternate;
+}
+@keyframes championGlow {
+  from { box-shadow: 0 0 30px rgba(240,180,41,0.12), inset 0 1px 0 rgba(255,255,255,0.05); }
+  to   { box-shadow: 0 0 55px rgba(240,180,41,0.28), inset 0 1px 0 rgba(255,255,255,0.05); }
+}
+.br-champion-trophy { font-size: 32px; margin-bottom: 8px; }
+.br-champion-label  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 10px; }
+.br-champion-name   { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 0 20px rgba(240,180,41,0.5); }
+.br-champion-flag   { font-size: 24px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+
+/* ── Probability table ── */
+.prob-table-wrapper {
+  margin: 32px 24px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.prob-table-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.prob-table-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.prob-table-scroll { overflow-x: auto; }
+.prob-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 480px;
+}
+.prob-table th {
+  padding: 8px 14px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.pt-team-col { text-align: left; }
+.prob-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.prob-table td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.prob-table tbody tr:last-child td { border-bottom: none; }
+.pt-team-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text); }
+.pt-flag { font-size: 16px; }
+.pt-pct-cell { text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ── Winner picker modal ── */
+.picker-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.picker-modal {
+  background: var(--surface2);
+  border: 1px solid var(--border-bright);
+  border-radius: 14px;
+  padding: 24px;
+  width: 300px;
+  max-width: 90vw;
+}
+.picker-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.picker-match-id {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.picker-options { display: flex; flex-direction: column; gap: 8px; }
+.picker-btn {
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.picker-btn:hover { border-color: var(--gold); background: rgba(240,180,41,0.06); }
+.picker-selected { border-color: var(--gold); background: rgba(240,180,41,0.1); color: var(--gold); }
+.picker-clear {
+  margin-top: 12px;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.picker-clear:hover { border-color: var(--border-bright); color: var(--text); }
+
+/* ── Active setup button ── */
+.bp-setup-active {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── Bracket team editor ── */
+.bs-wrapper {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px 0;
+}
+
+.bs-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.bs-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--gold);
+}
+.bs-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.bs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding-bottom: 4px;
+}
+@media (max-width: 1000px) { .bs-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .bs-grid { grid-template-columns: 1fr; } }
+
+.bs-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.bs-match-num {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.bs-teams {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bs-team-cell {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+.bs-flag { font-size: 15px; flex-shrink: 0; }
+.bs-select {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 6px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .15s;
+}
+.bs-select:focus { border-color: var(--gold); }
+.bs-vs {
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Nav tabs (shared with App.css) ── */
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 24px;
+}
+.nav-tab {
+  padding: 14px 22px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
