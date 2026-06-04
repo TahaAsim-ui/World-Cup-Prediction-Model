@@ -2,6 +2,8 @@
 
 An AI-powered football prediction app for simulating 2026 World Cup matches, group-stage standings, and knockout brackets.
 
+Live app: https://world-cup-prediction-model-buu24kpc3-taha-asims-projects.vercel.app
+
 The project combines a Flask backend, an XGBoost match outcome model, and a React/Vite frontend. The model predicts three outcomes for a fixture: Team 1 win, draw, or Team 2 win.
 
 ## Features
@@ -102,4 +104,3 @@ Generate a local HTML report:
 ```bash
 python3 generate_report.py
 ```
-
